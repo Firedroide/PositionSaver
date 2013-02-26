@@ -72,4 +72,17 @@
   	<system>Jenkins</system>
   	<url>http://stutz.dontexist.com:8080/</url>
   </ciManagement>
+  
+  <distributionManagement>
+    <repository>
+      <id>stutz-repo</id>
+      <name>Nexus Releases</name>
+      <url>http://stutz.dontexist.com:8081/nexus/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>stutz-repo</id>
+      <name>Nexus Snapshots</name>
+      <url>http://stutz.dontexist.com:8081/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
