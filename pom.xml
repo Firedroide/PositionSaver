@@ -4,7 +4,7 @@
 
   <groupId>me.firedroide.plugins</groupId>
   <artifactId>PositionSaver</artifactId>
-  <version>v0.01</version>
+  <version>v0.10-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>PositionSaver</name>
@@ -69,20 +69,20 @@
   </build>
 
   <ciManagement>
-  	<system>Jenkins</system>
-  	<url>http://stutz.dontexist.com:8080/</url>
+    <system>Jenkins</system>
+    <url>http://ci.stutzfam.ch/</url>
   </ciManagement>
   
   <distributionManagement>
     <repository>
       <id>stutz-repo</id>
       <name>Nexus Releases</name>
-      <url>http://stutz.dontexist.com:8081/nexus/content/repositories/releases/</url>
+      <url>http://repo.stutzfam.ch/content/repositories/releases/</url>
     </repository>
     <snapshotRepository>
       <id>stutz-repo</id>
       <name>Nexus Snapshots</name>
-      <url>http://stutz.dontexist.com:8081/nexus/content/repositories/snapshots/</url>
+      <url>http://repo.stutzfam.ch/content/repositories/snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 </project>
