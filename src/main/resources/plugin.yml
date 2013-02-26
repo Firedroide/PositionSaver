@@ -1,0 +1,7 @@
+name: PositionSaver
+version: '0.01'
+description: 'Saves the last position in certain worlds!' 
+main: me.firedroide.plugins.PositionSaver.PositionSaver
+load: POSTWORLD
+author: 'Firedroide'
+database: false

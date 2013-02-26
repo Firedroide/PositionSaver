@@ -1,0 +1,21 @@
+# These are the worlds where PositionSaver should save the last position.
+# E.g: allowedWorlds: [Survival, Creative]
+allowedWorlds: []
+
+# Or use this boolean to save the positions in all worlds.
+# Set this to true then.
+allowAll: false
+
+# After how many server ticks the last positions should be saved.
+# Positions will automatically be saved when the plugin is disabled,
+# but not when the server crashes.
+# Set to 0 or a value lower than 0 to disable.
+# (10 Minutes * 60 Seconds * 20 Ticks --> 12000 Ticks)
+saveDelay: 12000
+
+# Whether the position should be saved when the player leaves the server.
+saveOnLogout: false
+
+# When set to true, the destination of interdimensional teleportations
+# caused by commands like /tp will also be changed.
+teleportCommands: false
