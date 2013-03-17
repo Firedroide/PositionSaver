@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.event.world.WorldLoadEvent;
 
 public class TeleportationListener implements Listener {
 	
@@ -21,11 +20,11 @@ public class TeleportationListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerTeleport(PlayerTeleportEvent e) {
 		
+		if (e.getFrom().getWorld().equals(e.getTo().getWorld())) return;
 		if (e.getCause().equals(TeleportCause.NETHER_PORTAL)
 				|| e.getCause().equals(TeleportCause.END_PORTAL)) return;
-		if (e.getFrom().getWorld().equals(e.getTo().getWorld())) return;
 		
-		ps.setLastPosition(e.getFrom(), e.getPlayer());
+		ps.setLastPosition(e.getPlayer(), e.getFrom());
 		
 		if (e.getCause().equals(TeleportCause.COMMAND)
 				&& !ps.getChangeTeleportCommands()) return;
@@ -33,7 +32,7 @@ public class TeleportationListener implements Listener {
 			return;
 		}
 		
-		Location loc = ps.getLastPosition(e.getTo().getWorld(), e.getPlayer());
+		Location loc = ps.getLastLocation(e.getPlayer(), e.getTo().getWorld());
 		
 		if (loc != null) {
 			e.setTo(loc);
@@ -44,22 +43,14 @@ public class TeleportationListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		if (!ps.getSaveOnLogout()) return;
 		if (isIgnored(e.getPlayer(), e.getPlayer().getWorld().getName())) return;
-		ps.setLastPosition(e.getPlayer().getLocation(), e.getPlayer());
+		ps.setLastPosition(e.getPlayer(), e.getPlayer().getLocation());
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onWorldLoad(WorldLoadEvent e) {
-		if (ps.getWorldMaps().containsKey(e.getWorld().getName())) return;
-		if (ps.isAllowedWorld(e.getWorld())) {
-			ps.getWorldMaps().put(e.getWorld().getName(), new WorldMap(e.getWorld(), ps));
-		}
-	}
-	
-	private boolean isIgnored(Player p, String world) {
+	private boolean isIgnored(Player p, String group) {
 		boolean i = p.isPermissionSet("positionsaver.ignored")
 				&& p.hasPermission("positionsaver.ignored");
-		boolean w = p.isPermissionSet("positionsaver.ignored." + world)
-				&& p.hasPermission("positionsaver.ignored." + world);
+		boolean w = p.isPermissionSet("positionsaver.ignored." + group)
+				&& p.hasPermission("positionsaver.ignored." + group);
 		return (i || w);
 	}
 }

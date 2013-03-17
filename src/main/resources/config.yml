@@ -1,6 +1,14 @@
 # These are the worlds where PositionSaver should save the last position.
-# E.g: allowedWorlds: [Survival, Creative]
-allowedWorlds: []
+# E.g: worldGroups:
+#        Survival:
+#          worlds:
+#          - Survival
+#          - Survival_nether
+#          - Survival_the_end
+#        Creative:
+#          worlds:
+#          - Creative
+worldGroups: null
 
 # Or use this boolean to save the positions in all worlds.
 # Set this to true then.

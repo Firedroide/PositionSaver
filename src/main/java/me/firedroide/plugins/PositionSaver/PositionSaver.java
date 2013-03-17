@@ -1,25 +1,21 @@
 package me.firedroide.plugins.PositionSaver;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PositionSaver extends JavaPlugin {
 	
-	private File worldDir;
+	private static File worldDir;
 	private TeleportationListener tl;
-	private Map<String, WorldMap> wm;
 	
-	private List<String> allowedWorlds;
-	private boolean allowAll;
+	private ConfigurationSection worldGroups;
+	private WorldManager worldManager;
 	private int saveDelay;
 	private boolean saveOnLogout;
 	private boolean teleportCommands;
@@ -30,29 +26,26 @@ public class PositionSaver extends JavaPlugin {
 			this.saveDefaultConfig();
 		}
 		
-		worldDir = new File(this.getDataFolder(), "worlds");
+		worldDir = new File(this.getDataFolder(), "groups");
 		if (!worldDir.exists()) worldDir.mkdirs();
 		
-		allowedWorlds = this.getConfig().getStringList("allowedWorlds");
-		if (allowedWorlds == null) allowedWorlds = new ArrayList<String>();
+		worldGroups = this.getConfig().getConfigurationSection("worldGroups");
+		if (worldGroups != null) {
+			worldManager = new WorldManager(worldGroups, this);
+		} else {
+			worldManager = new WorldManager();
+		}
 		
-		allowAll = this.getConfig().getBoolean("allowAll", false);
 		saveDelay = this.getConfig().getInt("saveDelay", 12000);
 		saveOnLogout = this.getConfig().getBoolean("saveOnLogout", false);
 		teleportCommands = this.getConfig().getBoolean("teleportCommands", false);
-		
-		wm = new HashMap<String, WorldMap>();
-		for (World w : Bukkit.getServer().getWorlds()) {
-			if (isAllowedWorld(w)) {
-				wm.put(w.getName(), new WorldMap(w, this));
-			}
-		}
 		
 		tl = new TeleportationListener(this);
 		Bukkit.getPluginManager().registerEvents(tl, this);
 		
 		if (saveDelay > 0) {
 			Bukkit.getScheduler().runTaskTimerAsynchronously(this, new Runnable() {
+				
 				@Override
 				public void run() {
 					saveConfig();
@@ -69,36 +62,24 @@ public class PositionSaver extends JavaPlugin {
 	@Override
 	public void saveConfig() {
 		this.getLogger().info("Saving last position data...");
-		for (WorldMap map : wm.values()) {
-			map.save();
-		}
+		worldManager.saveGroups();
 		this.getLogger().info("Positions saved successfully.");
 	}
 	
-	public File getWorldFolder() {
+	public static File getWorldFolder() {
 		return worldDir;
 	}
 	
-	public Map<String, WorldMap> getWorldMaps() {
-		return wm;
+	public WorldManager getWorldManager() {
+		return worldManager;
 	}
 	
-	public Location getLastPosition(World w, Player p) {
-		if (wm.containsKey(w.getName())) {
-			return wm.get(w.getName()).getLocation(p, w);
-		} else {
-			return null;
-		}
+	public Location getLastLocation(Player p, World w) {
+		return worldManager.getLastLocation(p, w);
 	}
 	
-	public void setLastPosition(Location l, Player p) {
-		if (wm.containsKey(l.getWorld().getName())) {
-			wm.get(l.getWorld().getName()).setLocation(p, l);
-		}
-	}
-	
-	public boolean isAllowedWorld(World w) {
-		return (allowAll || allowedWorlds.contains(w.getName()));
+	public void setLastPosition(Player p, Location loc) {
+		worldManager.setLastLocation(p, loc);
 	}
 	
 	public boolean getSaveOnLogout() {
