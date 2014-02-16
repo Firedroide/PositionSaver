@@ -5,3 +5,4 @@ main: me.firedroide.plugins.PositionSaver.PositionSaver
 load: POSTWORLD
 author: 'Firedroide'
 database: false
+softdepend: [Multiverse-Core, Multiworld]
